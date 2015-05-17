@@ -23,6 +23,10 @@ public class Application extends Controller {
     	try {
     		//String[] commands = {"system.exe","-get t"};
     		String base_dir = System.getProperty("user.dir");
+    		
+    		// FOR HEROKU
+    		base_dir = "/app";
+    		
     		Logger.info("working directory="+base_dir);
     		String cmd = "Rscript "+base_dir+"/public/r/genewords.r " + base_dir + " "+ q;
     		Logger.info(cmd);
