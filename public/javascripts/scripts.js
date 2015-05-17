@@ -46,10 +46,10 @@ $( document ).ready(function() {
     $('#example').click(function(){
          $("input").typed({
                 strings: ["Genewords checks your words", "for matching gene names.", "Simply type in your sentence", "and hit enter", "Here's an example:", "This app is the best!"],
-                typeSpeed: 20,
+                typeSpeed: 5,
                 callback: function (){
                     $('#sentence').val('This app is the best!');
-                    setTimeout(function(){$('form').submit()}, 500);
+                    setTimeout(function(){$('form').submit()}, 300);
                 }
           });
     });
