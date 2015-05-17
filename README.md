@@ -1,1 +1,1 @@
-# genewords
+# genewords app
