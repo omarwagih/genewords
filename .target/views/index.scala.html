@@ -1,0 +1,12 @@
+@(message: String)
+
+@main("genewords") {
+	<div class="dummy dummy-text color-1">
+	<form id="genewords_form" action="@routes.Application.genewords_post()">
+		<input  maxlength="250" id="sentence" type="text" name="q" value="" class="color-1 dummy-text" onfocus="this.value = this.value;" style="padding:12px 5px">
+	</form>
+	</div>
+	
+	
+	
+}
