@@ -1,6 +1,6 @@
 
 args <- commandArgs(trailingOnly = TRUE)
-#args = c('~/Development/genewords/', 'hello world')
+#args = c('~/Development/genewords/', 'I love to tango')
 setwd(file.path(args[1], 'public', 'r'))
 args <- args[-1]
 
@@ -117,12 +117,13 @@ final = lapply(1:length(kmers), function(i){
     }
     
     score = ( sum(gene_word$len)/nchar(.word) ) * (1/nrow(gene_word))
+    score = score * nchar(.word)
   }
   
   list(word=word, score=score)
 })
 
-final_score = sum(sapply(final, function(z) z$score))/length(kmers)
+final_score = sum(sapply(final, function(z) z$score)) / sum(sapply(txt, nchar))
 final_score = round(final_score * 100)
 final_word = sapply(final, function(z) z$word)
 
@@ -132,5 +133,5 @@ final_msg = sample(score_msgs[[ind]], 1)
 
 ret = paste0(paste(final_word, collapse=' '), '.')
 
-ret = sprintf('%s<div class="score_wrap"><span class="score">%s%% match.</span>&nbsp;<span class="score_msg">%s</span></div>', ret, final_score, final_msg)
+ret = sprintf('%s<div class="score_wrap"><span class="score">Your score is %s%%/100.</span>&nbsp;<span class="score_msg">%s</span></div>', ret, final_score, final_msg)
 writeLines(ret)
