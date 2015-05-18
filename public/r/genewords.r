@@ -1,7 +1,27 @@
+
 args <- commandArgs(trailingOnly = TRUE)
-# args = c('~/Development/genewords/', 'hello world')
+#args = c('~/Development/genewords/', 'hello world')
 setwd(file.path(args[1], 'public', 'r'))
 args <- args[-1]
+
+
+score_msgs = list(
+  '80' = c("You're a geneious!", "Those are some pretty sweet genewords.", 
+           "GENEIFIED!", "Damn, look at those genes!", "You're pretty good at this...", 
+           "Smash!", "Great word combo!", "That's a pretty sweet word combo.", "Excellent stuff!",
+           "Exquisite.", "A-OK!", "Respect.", "Unexceptional words!", "I'm impressed."),
+  '70' = c("Almost...", "So close to perfect.", "Just a few characters away...", "Pleasing.", "Right on!", "Almost perfect.", "Just about.", "Nice job!", "Not bad, not bad at all.", "You're pretty good.", "How about you get a 100% match?", "No cheating!", "Sweet words you got there."), 
+  '40' = c("You did alright.", "Come on try a little harder.", "The gene gods have faith in you.", 
+           "So-so.", "Mediocre.", "Not bad but not good.", "I mean it's tolerable.", "Pretty average.", 
+           "Passable.", "OK-ish.", "Standard.", "You can match more."),
+  '20' = c("Did you know the gene 'lovE' is a transcriptional regulator? Try again.", "You can match more words!", 
+           "Meh.", "Try harder.", "Could be worse.", "Eh, you should really try again.", "Can't say I'm impressed...", "You can do much better."),
+  '0' = c("Do you even gene?", "Your words suck.", "Nothing?! You should try again.", "Wah.", "This sucks.", "Ugh.", 
+          "This is pretty poor.", "Nah, no good.", "For the love of god, give it another go.", "How disappointing.", 
+          "This is pretty bad.", "This is disappointing.", "My grandma could come up with more genewords.", "Nooooooo.", 
+          "Can anyone be this bad?.", "Second time's a charm?.", "You're gonna make me cry.", "Well crap.", "Fail.", "Almost shit.")
+)
+
 
 suppressPackageStartupMessages({
   library(RSQLite)
@@ -77,8 +97,9 @@ up_split = lapply(up_split, function(z){
 # Keep kmers that have a gene
 kmers = lapply(kmers, function(z) z[z$kmer %in% names(up_split),])
 
-final = sapply(1:length(kmers), function(i){
+final = lapply(1:length(kmers), function(i){
   
+  score = 0
   .word = word = txt[[i]]
   kmer_data = kmers[[i]]
   if(nrow(kmer_data) > 0){
@@ -94,9 +115,22 @@ final = sapply(1:length(kmers), function(i){
       stri_sub(word, z$start + offset, z$end + offset) = tag
       offset = nchar(word) - nchar(.word) # How many extra characters did we add
     }
+    
+    score = ( sum(gene_word$len)/nchar(.word) ) * (1/nrow(gene_word))
   }
-  word
+  
+  list(word=word, score=score)
 })
 
-ret = paste0(paste(final, collapse=' '), '.')
+final_score = sum(sapply(final, function(z) z$score))/length(kmers)
+final_score = round(final_score * 100)
+final_word = sapply(final, function(z) z$word)
+
+nc = as.numeric( names(score_msgs) )
+ind = which.min(abs(final_score - nc))
+final_msg = sample(score_msgs[[ind]], 1)
+
+ret = paste0(paste(final_word, collapse=' '), '.')
+
+ret = sprintf('%s<div class="score_wrap"><span class="score">%s%% match.</span>&nbsp;<span class="score_msg">%s</span></div>', ret, final_score, final_msg)
 writeLines(ret)
