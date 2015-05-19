@@ -133,5 +133,5 @@ final_msg = sample(score_msgs[[ind]], 1)
 
 ret = paste0(paste(final_word, collapse=' '), '.')
 
-ret = sprintf('%s<div class="score_wrap"><span class="score">Your score is %s/100.</span>&nbsp;<span class="score_msg">%s</span></div>', ret, final_score, final_msg)
+ret = sprintf('%s<div class="score_wrap"><span class="score">Your scored %s/100.</span>&nbsp;<span class="score_msg">%s</span></div>', ret, final_score, final_msg)
 writeLines(ret)
